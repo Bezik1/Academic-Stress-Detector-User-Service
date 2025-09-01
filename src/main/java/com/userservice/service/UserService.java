@@ -15,11 +15,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllPosts() {
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User addPost(User post) {
+    public User addUser(User post) {
         return userRepository.save(post);
     }
 
