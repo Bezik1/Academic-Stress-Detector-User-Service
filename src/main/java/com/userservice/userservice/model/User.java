@@ -1,9 +1,9 @@
-package com.userservice.model;
+package com.userservice.userservice.model;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

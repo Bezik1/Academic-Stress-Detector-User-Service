@@ -1,11 +1,12 @@
-package com.userservice.service;
+package com.userservice.userservice.service;
+
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.userservice.model.Post;
-import com.userservice.repository.PostRepository;
+import com.userservice.userservice.repository.PostRepository;
+import com.userservice.userservice.model.Post;
 
-import java.util.List;
 
 @Service
 public class PostService {

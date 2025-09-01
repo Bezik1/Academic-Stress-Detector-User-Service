@@ -1,11 +1,12 @@
-package com.userservice.controller;
+package com.userservice.userservice.controller;
 
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.userservice.model.User;
-import com.userservice.service.UserService;
+import com.userservice.userservice.model.User;
+import com.userservice.userservice.service.UserService;
+
 
 @RestController
 @RequestMapping("/api/users")

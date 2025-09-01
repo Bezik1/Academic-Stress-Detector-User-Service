@@ -14,4 +14,4 @@ public class UserserviceApplication {
 
 // brew services start postgresql
 // psql
-// mvn spring-boot:run
+// ./mvnw spring-boot:run
