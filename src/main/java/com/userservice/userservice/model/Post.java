@@ -1,5 +1,7 @@
 package com.userservice.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +18,7 @@ public class Post {
     private String content;
 
     @Column(name = "user_id", nullable = false)
+    @JsonProperty("user_id")
     private Long userId;
 
     public Post() {}
@@ -50,11 +53,13 @@ public class Post {
         this.content = content;
     }
 
-    public Long getUser() {
+    @JsonProperty("user_id")
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUser(Long userId) {
+    @JsonProperty("user_id")
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 }
