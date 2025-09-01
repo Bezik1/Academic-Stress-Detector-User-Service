@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 
 
 @Entity
-@Table(name = "post")
+@Table(name = "session")
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
