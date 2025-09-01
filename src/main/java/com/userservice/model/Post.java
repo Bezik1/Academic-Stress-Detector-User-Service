@@ -15,16 +15,15 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     public Post() {}
 
-    public Post(String name, String content, User user) {
+    public Post(String name, String content, Long userId) {
         this.name = name;
         this.content = content;
-        this.user = user;
+        this.userId = userId;
     }
 
     public Long getId() {
@@ -51,11 +50,11 @@ public class Post {
         this.content = content;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUser() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Long userId) {
+        this.userId = userId;
     }
 }
