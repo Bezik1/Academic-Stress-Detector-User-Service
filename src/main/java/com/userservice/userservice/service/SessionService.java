@@ -8,12 +8,11 @@ import org.springframework.stereotype.Service;
 import com.userservice.userservice.repository.SessionRepository;
 import com.userservice.userservice.model.Session;
 
-
 @Service
-public class PostService {
+public class SessionService {
     private final SessionRepository sessionRepository;
 
-    public PostService(SessionRepository sessionRepository) {
+    public SessionService(SessionRepository sessionRepository) {
         this.sessionRepository = sessionRepository;
     }
 
