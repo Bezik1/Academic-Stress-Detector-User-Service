@@ -11,3 +11,6 @@ public class UserserviceApplication {
 	}
 
 }
+
+// brew services start postgresql
+// psql
