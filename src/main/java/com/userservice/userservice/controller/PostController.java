@@ -15,7 +15,7 @@ import com.userservice.userservice.model.Session;
 import com.userservice.userservice.service.SessionService;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/sessions")
 public class PostController {
     private final SessionService sessionService;
 
