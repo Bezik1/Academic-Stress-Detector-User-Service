@@ -1,6 +1,14 @@
 package com.userservice.userservice.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "\"user\"")
@@ -9,17 +17,33 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
-    private String name;
+    @NotBlank(message = "Username cannot be empty!")
+    @Column(length = 100, nullable = false, unique = true)
+    private String username;
 
-    @Column(length = 255, nullable = false)
+    @NotBlank(message = "Email cannot be empty!")
+    @Email(message = "Incorrect Email!")
+    @Column(length = 255, nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Password cannot be empty!")
+    @Size(min = 6, message = "Password must have at least 6 letters!")
+    @Pattern.List({
+        @Pattern(regexp = ".*[A-Z].*", message = "Password must contain an uppercase letter!"),
+        @Pattern(regexp = ".*[a-z].*", message = "Password must contain at least one lower letter!"),
+        @Pattern(regexp = ".*[@$!%*?&].*", message = "Password must contain a special character!")
+    })
     @Column(length = 255, nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private Integer age;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Session> sessions = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<String> roles = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -29,12 +53,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -53,22 +77,29 @@ public class User {
         this.password = password;
     }
 
-    public Integer getAge() {
-        return age;
+    public List<Session> getSessions() {
+        return sessions;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setSessions(List<Session> sessions) {
+        this.sessions = sessions;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
     public User() {}
 
-
-    public User(Long id, String name, String email, String password, Integer age) {
-        this.id = id;
-        this.name = name;
+    public User(String username, String email, String password, List<Session> sessions, Set<String> roles) {
+        this.username = username;
         this.email = email;
         this.password = password;
-        this.age = age;
+        this.sessions = sessions;
+        this.roles = roles;
     }
 }

@@ -15,12 +15,13 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("Cannot find user with id: " + userId));
     }
 
-    public User addUser(User post) {
-        return userRepository.save(post);
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     public void removeByUserId(Long userId) {
