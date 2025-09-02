@@ -22,11 +22,6 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping
-    public User registerUser(@RequestBody User user) {
-        return userService.registerUser(user.getUsername(), user.getEmail(), user.getPassword());
-    }
-
     @DeleteMapping("/{userId}")
     public void removeUser(@PathVariable Long userId) {
         userService.removeByUserId(userId);

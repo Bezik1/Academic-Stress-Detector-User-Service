@@ -1,152 +1,57 @@
-package com.userservice.userservice.model;
+package com.userservice.userservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+public class CreateSessionRequest {
 
-@Entity
-@Table(name = "session")
-public class Session {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties("sessions") 
-    private User user;
-
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer headache;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer sleepQuality;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer breathingProblems;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer noiseLevel;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer livingConditions;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer safety;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer basicNeeds;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer academicPerformance;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer studyLoad;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer teacherStudentRelationship;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer futureCareerConcerns;
 
-    @Min(0)
-    @Max(3)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(3)
     private Integer socialSupport;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer peerPressure;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer extracurricularActivities;
 
-    @Min(0)
-    @Max(5)
-    @NotNull
-    @Column(nullable = false)
+    @NotNull @Min(0) @Max(5)
     private Integer bullying;
 
-    public Session() {}
-
-    public Session(User user, Integer headache, Integer sleepQuality, Integer breathingProblems,
-                Integer noiseLevel, Integer livingConditions, Integer safety, Integer basicNeeds,
-                Integer academicPerformance, Integer studyLoad, Integer teacherStudentRelationship,
-                Integer futureCareerConcerns, Integer socialSupport, Integer peerPressure,
-                Integer extracurricularActivities, Integer bullying) {
-        this.user = user;
-        this.headache = headache;
-        this.sleepQuality = sleepQuality;
-        this.breathingProblems = breathingProblems;
-        this.noiseLevel = noiseLevel;
-        this.livingConditions = livingConditions;
-        this.safety = safety;
-        this.basicNeeds = basicNeeds;
-        this.academicPerformance = academicPerformance;
-        this.studyLoad = studyLoad;
-        this.teacherStudentRelationship = teacherStudentRelationship;
-        this.futureCareerConcerns = futureCareerConcerns;
-        this.socialSupport = socialSupport;
-        this.peerPressure = peerPressure;
-        this.extracurricularActivities = extracurricularActivities;
-        this.bullying = bullying;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public CreateSessionRequest() {}
 
     public Integer getHeadache() {
         return headache;
@@ -267,4 +172,6 @@ public class Session {
     public void setBullying(Integer bullying) {
         this.bullying = bullying;
     }
+
+    
 }
