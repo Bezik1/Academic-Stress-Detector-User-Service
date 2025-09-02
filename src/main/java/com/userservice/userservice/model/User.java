@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "\"user\"")
@@ -13,12 +15,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100, nullable = false)
+    @NotBlank(message = "Username cannot be empty!")
+    @Column(length = 100, nullable = false, unique = true)
     private String username;
 
-    @Column(length = 255, nullable = false)
+    @NotBlank(message = "Email cannot be empty!")
+    @Email(message = "Incorrect Email!")
+    @Column(length = 255, nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Password cannot be empty!")
+    @Size(min = 6, message = "Password must have at least 6 letters!")
+    @Pattern.List({
+        @Pattern(regexp = ".*[A-Z].*", message = "Password must contain an uppercase letter!"),
+        @Pattern(regexp = ".*[a-z].*", message = "Password must contain at least one lower letter!"),
+        @Pattern(regexp = ".*[@$!%*?&].*", message = "Password must contain a special character!")
+    })
     @Column(length = 255, nullable = false)
     private String password;
 
