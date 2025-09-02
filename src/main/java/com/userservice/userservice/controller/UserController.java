@@ -22,12 +22,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @PostMapping
-    public User addUser(@RequestBody User user) {
-        return userService.addUser(user);
-    }
-
-    @DeleteMapping("{userId}")
+    @DeleteMapping("/{userId}")
     public void removeUser(@PathVariable Long userId) {
         userService.removeByUserId(userId);
     }
