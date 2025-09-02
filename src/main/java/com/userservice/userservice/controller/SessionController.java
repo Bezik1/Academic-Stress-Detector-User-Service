@@ -16,16 +16,11 @@ import com.userservice.userservice.service.SessionService;
 
 @RestController
 @RequestMapping("/api/sessions")
-public class PostController {
+public class SessionController {
     private final SessionService sessionService;
 
-    public PostController(SessionService postService) {
+    public SessionController(SessionService postService) {
         this.sessionService = postService;
-    }
-
-    @GetMapping
-    public List<Session> getAllSessions() {
-        return sessionService.getAllSessions();
     }
 
     @PostMapping
