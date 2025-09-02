@@ -33,10 +33,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void login(String email, String password) {
-        
-    }
-
     public void removeByUserId(Long userId) {
         userRepository.deleteById(userId);
     }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.userservice.userservice.dto.LoginRequest;
 import com.userservice.userservice.model.User;
 import com.userservice.userservice.service.UserService;
 
@@ -26,11 +25,6 @@ public class UserController {
     @PostMapping
     public User registerUser(@RequestBody User user) {
         return userService.registerUser(user.getUsername(), user.getEmail(), user.getPassword());
-    }
-
-    @PostMapping("/login")
-    public void login(@RequestBody LoginRequest user) {
-        userService.login(user.getEmail(), user.getPassword());
     }
 
     @DeleteMapping("/{userId}")
