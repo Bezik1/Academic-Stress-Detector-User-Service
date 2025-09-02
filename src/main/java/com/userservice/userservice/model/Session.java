@@ -3,7 +3,6 @@ package com.userservice.userservice.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-
 @Entity
 @Table(name = "session")
 public class Session {
@@ -11,111 +10,108 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "headache", nullable = false)
+    @Column(nullable = false)
     private Integer headache;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "sleep_quality", nullable = false)
+    @Column(nullable = false)
     private Integer sleepQuality;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "breathing_problems", nullable = false)
+    @Column(nullable = false)
     private Integer breathingProblems;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "noise_level", nullable = false)
+    @Column(nullable = false)
     private Integer noiseLevel;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "living_conditions", nullable = false)
+    @Column(nullable = false)
     private Integer livingConditions;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "safety", nullable = false)
+    @Column(nullable = false)
     private Integer safety;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "basic_needs", nullable = false)
+    @Column(nullable = false)
     private Integer basicNeeds;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "academic_performance", nullable = false)
+    @Column(nullable = false)
     private Integer academicPerformance;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "study_load", nullable = false)
+    @Column(nullable = false)
     private Integer studyLoad;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "teacher_student_relationship", nullable = false)
+    @Column(nullable = false)
     private Integer teacherStudentRelationship;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "future_career_concerns", nullable = false)
+    @Column(nullable = false)
     private Integer futureCareerConcerns;
 
     @Min(0)
-    @Max(5)
+    @Max(3)
     @NotNull
-    @Column(name = "social_support", nullable = false)
+    @Column(nullable = false)
     private Integer socialSupport;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "peer_pressure", nullable = false)
+    @Column(nullable = false)
     private Integer peerPressure;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "extracurricular_activities", nullable = false)
+    @Column(nullable = false)
     private Integer extracurricularActivities;
 
     @Min(0)
     @Max(5)
     @NotNull
-    @Column(name = "bullying", nullable = false)
+    @Column(nullable = false)
     private Integer bullying;
 
     public Session() {}
 
-    public Session(Long userId, @Min(0) @Max(5) @NotNull Integer headache,
-            @Min(0) @Max(5) @NotNull Integer sleepQuality, @Min(0) @Max(5) @NotNull Integer breathingProblems,
-            @Min(0) @Max(5) @NotNull Integer noiseLevel, @Min(0) @Max(5) @NotNull Integer livingConditions,
-            @Min(0) @Max(5) @NotNull Integer safety, @Min(0) @Max(5) @NotNull Integer basicNeeds,
-            @Min(0) @Max(5) @NotNull Integer academicPerformance, @Min(0) @Max(5) @NotNull Integer studyLoad,
-            @Min(0) @Max(5) @NotNull Integer teacherStudentRelationship,
-            @Min(0) @Max(5) @NotNull Integer futureCareerConcerns, @Min(0) @Max(5) @NotNull Integer socialSupport,
-            @Min(0) @Max(5) @NotNull Integer peerPressure, @Min(0) @Max(5) @NotNull Integer extracurricularActivities,
-            @Min(0) @Max(5) @NotNull Integer bullying) {
-        this.userId = userId;
+    public Session(User user, Integer headache, Integer sleepQuality, Integer breathingProblems,
+                Integer noiseLevel, Integer livingConditions, Integer safety, Integer basicNeeds,
+                Integer academicPerformance, Integer studyLoad, Integer teacherStudentRelationship,
+                Integer futureCareerConcerns, Integer socialSupport, Integer peerPressure,
+                Integer extracurricularActivities, Integer bullying) {
+        this.user = user;
         this.headache = headache;
         this.sleepQuality = sleepQuality;
         this.breathingProblems = breathingProblems;
@@ -133,22 +129,20 @@ public class Session {
         this.bullying = bullying;
     }
 
-
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Integer getHeadache() {
