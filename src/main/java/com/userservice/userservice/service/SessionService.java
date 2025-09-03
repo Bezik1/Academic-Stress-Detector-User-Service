@@ -3,12 +3,16 @@ package com.userservice.userservice.service;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.userservice.userservice.repository.SessionRepository;
 import com.userservice.userservice.dto.CreateSessionRequest;
 import com.userservice.userservice.model.Session;
 import com.userservice.userservice.model.User;
+
+import com.userservice.userservice.errors.Session.*;
+import com.userservice.userservice.errors.User.*;
 
 @Service
 public class SessionService {
@@ -20,48 +24,98 @@ public class SessionService {
         this.sessionRepository = sessionRepository;
     }
 
+    public Session getSessionById(Long sessionId) {
+        try {
+            return sessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new SessionNotFoundException(sessionId, null));
+        } catch (DataAccessException e) {
+            throw new SessionFetchingException(sessionId, e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while fetching session with id " + sessionId, e);
+        }
+    }
+
     public List<Session> getAllSessions() {
-        return sessionRepository.findAll();
+        try {
+            return sessionRepository.findAll();
+        } catch (DataAccessException e) {
+            throw new AllSessionsFetchingException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while fetching all sessions");
+        }
     }
 
     public Session addSession(CreateSessionRequest request, Long userId) {
-        User user = userService.findById(userId);
+        try {
+            User user = userService.findById(userId);
+            if (user == null) {
+                throw new UserNotFoundException(userId, null);
+            }
 
-        Session session = new Session();
-        session.setUser(user);
-        session.setHeadache(request.getHeadache());
-        session.setSleepQuality(request.getSleepQuality());
-        session.setBreathingProblems(request.getBreathingProblems());
-        session.setNoiseLevel(request.getNoiseLevel());
-        session.setLivingConditions(request.getLivingConditions());
-        session.setSafety(request.getSafety());
-        session.setBasicNeeds(request.getBasicNeeds());
-        session.setAcademicPerformance(request.getAcademicPerformance());
-        session.setStudyLoad(request.getStudyLoad());
-        session.setTeacherStudentRelationship(request.getTeacherStudentRelationship());
-        session.setFutureCareerConcerns(request.getFutureCareerConcerns());
-        session.setSocialSupport(request.getSocialSupport());
-        session.setPeerPressure(request.getPeerPressure());
-        session.setExtracurricularActivities(request.getExtracurricularActivities());
-        session.setBullying(request.getBullying());
+            Session session = new Session();
+            session.setUser(user);
+            session.setHeadache(request.getHeadache());
+            session.setSleepQuality(request.getSleepQuality());
+            session.setBreathingProblems(request.getBreathingProblems());
+            session.setNoiseLevel(request.getNoiseLevel());
+            session.setLivingConditions(request.getLivingConditions());
+            session.setSafety(request.getSafety());
+            session.setBasicNeeds(request.getBasicNeeds());
+            session.setAcademicPerformance(request.getAcademicPerformance());
+            session.setStudyLoad(request.getStudyLoad());
+            session.setTeacherStudentRelationship(request.getTeacherStudentRelationship());
+            session.setFutureCareerConcerns(request.getFutureCareerConcerns());
+            session.setSocialSupport(request.getSocialSupport());
+            session.setPeerPressure(request.getPeerPressure());
+            session.setExtracurricularActivities(request.getExtracurricularActivities());
+            session.setBullying(request.getBullying());
 
-        return sessionRepository.save(session);
+            return sessionRepository.save(session);
+        } catch (DataAccessException e) {
+            throw new SessionSavingExcepiton(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while adding session", e);
+        }
     }
 
     public List<Session> getSessionsByUserId(Long userId) {
-        return sessionRepository.findByUserId(userId);
+        try {
+            if (userService.findById(userId) == null) {
+                throw new UserNotFoundException(userId, null);
+            }
+            return sessionRepository.findByUserId(userId);
+        } catch (DataAccessException e) {
+            throw new SessionFetchingException(userId, e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while fetching sessions for user " + userId, e);
+        }
     }
 
     public Session updateSession(Long sessionId, Session newSession) {
-        Session existingSession = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new RuntimeException("Session not found with id " + sessionId));
+        try {
+            Session existingSession = sessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new SessionNotFoundException(sessionId, null));
 
-        BeanUtils.copyProperties(newSession, existingSession, "id");
+            BeanUtils.copyProperties(newSession, existingSession, "id", "user");
 
-        return sessionRepository.save(existingSession);
+            return sessionRepository.save(existingSession);
+        } catch (DataAccessException e) {
+            throw new SessionUpdateException(sessionId, null);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while updating session with id " + sessionId, e);
+        }
     }
 
     public void removeSessionById(Long sessionId) {
-        sessionRepository.deleteById(sessionId);
+        try {
+            if (!sessionRepository.existsById(sessionId)) {
+                throw  new SessionNotFoundException(sessionId, null);
+            }
+            sessionRepository.deleteById(sessionId);
+        } catch (DataAccessException e) {
+            throw new SessionRemovalException(sessionId, null);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while deleting session with id " + sessionId, e);
+        }
     }
 }

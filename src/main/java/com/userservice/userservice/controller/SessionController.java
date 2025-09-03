@@ -1,21 +1,15 @@
 package com.userservice.userservice.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.userservice.userservice.dto.CreateSessionRequest;
+import com.userservice.userservice.dto.SessionDto;
 import com.userservice.userservice.model.Session;
 import com.userservice.userservice.service.SessionService;
 
@@ -24,33 +18,76 @@ import com.userservice.userservice.service.SessionService;
 public class SessionController {
     private final SessionService sessionService;
 
-    public SessionController(SessionService postService) {
-        this.sessionService = postService;
+    public SessionController(SessionService sessionService) {
+        this.sessionService = sessionService;
     }
 
-    @PostMapping
-    @PreAuthorize("(#userId.toString() == authentication.name and hasRole('USER')) or hasRole('ADMIN')")
-    public Session addSession(@RequestBody CreateSessionRequest request, Authentication authentication) {
-        String userIdStr = (String) authentication.getPrincipal();
-        Long userId = Long.valueOf(userIdStr);
-        return sessionService.addSession(request, userId);
+    @GetMapping("/auth-test")
+    public ResponseEntity<?> authTest(Authentication authentication) {
+        System.out.println("Principal: " + authentication.getPrincipal());
+        System.out.println("Authorities: " + authentication.getAuthorities());
+        return ResponseEntity.ok(authentication.getAuthorities());
     }
-    
+
+    @GetMapping
+    @PreAuthorize("@security.isAdmin(authentication)")
+    public ResponseEntity<?> getSessions() {
+        try {
+            return ResponseEntity.ok(sessionService.getAllSessions());
+        } catch(Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/user/{userId}")
+    @PreAuthorize("@security.isOwner(authentication, #userId) or @security.isAdmin(authentication)")
+    public ResponseEntity<?> addSession(@PathVariable Long userId,
+                                        @RequestBody CreateSessionRequest request) {
+        try {
+            Session session = sessionService.addSession(request, userId);
+            return ResponseEntity.ok(SessionDto.fromEntity(session));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/user/{userId}")
-    @PreAuthorize("(#userId.toString() == authentication.name and hasRole('USER')) or hasRole('ADMIN')")
-    public List<Session> getSessionsByUser(@PathVariable Long userId) {
-        return sessionService.getSessionsByUserId(userId);
+    @PreAuthorize("@security.isOwner(authentication, #userId) or @security.isAdmin(authentication)")
+    public ResponseEntity<?> getSessionsByUser(@PathVariable Long userId) {
+        try {
+            List<Session> sessions = sessionService.getSessionsByUserId(userId);
+            List<SessionDto> result = sessions.stream()
+                    .map(SessionDto::fromEntity)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
-    @PutMapping("/user/{userId}")
-    @PreAuthorize("(#userId.toString() == authentication.name and hasRole('USER')) or hasRole('ADMIN')")
-    public Session updateSession(@PathVariable Long sessionId, @RequestBody Session session) {
-        return sessionService.updateSession(sessionId, session);
+    @PutMapping("/{sessionId}")
+    @PreAuthorize("@security.isSessionOwner(authentication, #sessionId) or @security.isAdmin(authentication)")
+    public ResponseEntity<?> updateSession(@PathVariable Long sessionId, @RequestBody Session session) {
+        try {
+            Session updated = sessionService.updateSession(sessionId, session);
+            return ResponseEntity.ok(SessionDto.fromEntity(updated));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
-    @DeleteMapping("{sessionId}")
-    @PreAuthorize("(#userId.toString() == authentication.name and hasRole('USER')) or hasRole('ADMIN')")
-    public void removeSession(@PathVariable Long sessionId) {
-        sessionService.removeSessionById(sessionId);
+    @DeleteMapping("/{sessionId}")
+    @PreAuthorize("@security.isSessionOwner(authentication, #sessionId)")
+    public ResponseEntity<?> removeSession(@PathVariable Long sessionId) {
+        try {
+            sessionService.removeSessionById(sessionId);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 }

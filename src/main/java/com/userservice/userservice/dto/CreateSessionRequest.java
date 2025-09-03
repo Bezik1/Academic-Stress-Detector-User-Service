@@ -52,6 +52,33 @@ public class CreateSessionRequest {
     private Integer bullying;
 
     public CreateSessionRequest() {}
+    public CreateSessionRequest(@NotNull @Min(0) @Max(5) Integer headache,
+            @NotNull @Min(0) @Max(5) Integer sleepQuality, @NotNull @Min(0) @Max(5) Integer breathingProblems,
+            @NotNull @Min(0) @Max(5) Integer noiseLevel, @NotNull @Min(0) @Max(5) Integer livingConditions,
+            @NotNull @Min(0) @Max(5) Integer safety, @NotNull @Min(0) @Max(5) Integer basicNeeds,
+            @NotNull @Min(0) @Max(5) Integer academicPerformance, @NotNull @Min(0) @Max(5) Integer studyLoad,
+            @NotNull @Min(0) @Max(5) Integer teacherStudentRelationship,
+            @NotNull @Min(0) @Max(5) Integer futureCareerConcerns, @NotNull @Min(0) @Max(3) Integer socialSupport,
+            @NotNull @Min(0) @Max(5) Integer peerPressure, @NotNull @Min(0) @Max(5) Integer extracurricularActivities,
+            @NotNull @Min(0) @Max(5) Integer bullying) {
+        this.headache = headache;
+        this.sleepQuality = sleepQuality;
+        this.breathingProblems = breathingProblems;
+        this.noiseLevel = noiseLevel;
+        this.livingConditions = livingConditions;
+        this.safety = safety;
+        this.basicNeeds = basicNeeds;
+        this.academicPerformance = academicPerformance;
+        this.studyLoad = studyLoad;
+        this.teacherStudentRelationship = teacherStudentRelationship;
+        this.futureCareerConcerns = futureCareerConcerns;
+        this.socialSupport = socialSupport;
+        this.peerPressure = peerPressure;
+        this.extracurricularActivities = extracurricularActivities;
+        this.bullying = bullying;
+    }
+
+
 
     public Integer getHeadache() {
         return headache;
