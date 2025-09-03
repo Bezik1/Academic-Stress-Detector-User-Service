@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import com.userservice.userservice.dto.CreateSessionRequest;
 import com.userservice.userservice.dto.SessionDto;
+import com.userservice.userservice.dto.UpdateSessionDto;
 import com.userservice.userservice.model.Session;
 import com.userservice.userservice.service.SessionService;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping("/api/sessions")
@@ -65,11 +69,25 @@ public class SessionController {
         }
     }
 
-    @PutMapping("/{sessionId}")
+    @PutMapping("updateData/{sessionId}")
     @PreAuthorize("@security.isSessionOwner(authentication, #sessionId) or @security.isAdmin(authentication)")
-    public ResponseEntity<?> updateSession(@PathVariable Long sessionId, @RequestBody Session session) {
+    public ResponseEntity<?> updateSessionData(@PathVariable Long sessionId, @RequestBody UpdateSessionDto session) {
         try {
-            Session updated = sessionService.updateSession(sessionId, session);
+            Session updated = sessionService.updateSessionData(sessionId, session);
+            return ResponseEntity.ok(SessionDto.fromEntity(updated));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("updateResult/{sessionId}")
+    @PreAuthorize("@security.isSessionOwner(authentication, #sessionId) or @security.isAdmin(authentication)")
+    public ResponseEntity<?> updateSessionREsult(@PathVariable Long sessionId,
+                                                @RequestParam @Min(0) @Max(2) Integer stressLevel) {
+        try {
+            Session updated = sessionService.updateSessionResult(sessionId, stressLevel);
             return ResponseEntity.ok(SessionDto.fromEntity(updated));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

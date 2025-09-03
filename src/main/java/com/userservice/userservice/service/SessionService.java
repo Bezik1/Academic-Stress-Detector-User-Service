@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.userservice.userservice.repository.SessionRepository;
 import com.userservice.userservice.dto.CreateSessionRequest;
+import com.userservice.userservice.dto.UpdateSessionDto;
 import com.userservice.userservice.model.Session;
 import com.userservice.userservice.model.User;
 
@@ -54,6 +55,7 @@ public class SessionService {
 
             Session session = new Session();
             session.setUser(user);
+            session.setStressLevel(null);
             session.setHeadache(request.getHeadache());
             session.setSleepQuality(request.getSleepQuality());
             session.setBreathingProblems(request.getBreathingProblems());
@@ -91,12 +93,27 @@ public class SessionService {
         }
     }
 
-    public Session updateSession(Long sessionId, Session newSession) {
+    public Session updateSessionData(Long sessionId, UpdateSessionDto newSession) {
         try {
             Session existingSession = sessionRepository.findById(sessionId)
                     .orElseThrow(() -> new SessionNotFoundException(sessionId, null));
 
-            BeanUtils.copyProperties(newSession, existingSession, "id", "user");
+            BeanUtils.copyProperties(newSession, existingSession, "id", "user", "stressLevel");
+
+            return sessionRepository.save(existingSession);
+        } catch (DataAccessException e) {
+            throw new SessionUpdateException(sessionId, null);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while updating session with id " + sessionId, e);
+        }
+    }
+
+    public Session updateSessionResult(Long sessionId, Integer stressLevel) {
+        try {
+            Session existingSession = sessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new SessionNotFoundException(sessionId, null));
+
+            existingSession.setStressLevel(stressLevel);
 
             return sessionRepository.save(existingSession);
         } catch (DataAccessException e) {
