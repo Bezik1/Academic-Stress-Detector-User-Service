@@ -2,9 +2,8 @@ package com.userservice.userservice.dto;
 
 import com.userservice.userservice.model.Session;
 
-public class SessionDto {
+public class UpdateSessionDto {
     private Long id;
-    private Integer stressLevel;
     private Integer headache;
     private Integer sleepQuality;
     private Integer breathingProblems;
@@ -23,7 +22,6 @@ public class SessionDto {
 
     public static SessionDto fromEntity(Session session) {
         SessionDto dto = new SessionDto();
-        dto.setStressLevel(session.getStressLevel());
         dto.setId(session.getId());
         dto.setHeadache(session.getHeadache());
         dto.setSleepQuality(session.getSleepQuality());
@@ -43,8 +41,6 @@ public class SessionDto {
         return dto;
     }
 
-    public Integer getStressLevel() { return stressLevel; }
-    public void setStressLevel(Integer stressLevel) { this.stressLevel = stressLevel; }
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Integer getHeadache() { return headache; }

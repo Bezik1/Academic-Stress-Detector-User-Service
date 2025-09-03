@@ -18,6 +18,11 @@ public class Session {
     private User user;
 
     @Min(0)
+    @Max(2)
+    @Column
+    private Integer stressLevel;
+
+    @Min(0)
     @Max(5)
     @NotNull
     @Column(nullable = false)
@@ -113,7 +118,8 @@ public class Session {
                 Integer noiseLevel, Integer livingConditions, Integer safety, Integer basicNeeds,
                 Integer academicPerformance, Integer studyLoad, Integer teacherStudentRelationship,
                 Integer futureCareerConcerns, Integer socialSupport, Integer peerPressure,
-                Integer extracurricularActivities, Integer bullying) {
+                Integer extracurricularActivities, Integer bullying, Integer stressLevel) {
+        this.stressLevel = stressLevel;
         this.user = user;
         this.headache = headache;
         this.sleepQuality = sleepQuality;
@@ -130,6 +136,14 @@ public class Session {
         this.peerPressure = peerPressure;
         this.extracurricularActivities = extracurricularActivities;
         this.bullying = bullying;
+    }
+
+    public Integer getStressLevel() {
+        return stressLevel;
+    }
+
+    public void setStressLevel(Integer stressLevel) {
+        this.stressLevel = stressLevel;
     }
 
     public Long getId() {
