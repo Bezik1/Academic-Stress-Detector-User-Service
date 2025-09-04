@@ -21,6 +21,7 @@ public class SecurityExpressions {
     }
 
     public boolean isOwner(Authentication authentication, Long userId) {
+        System.out.println(authentication.getPrincipal());
         if(!isUser(authentication)) return false;
         
         Long principalId = Long.valueOf(authentication.getPrincipal().toString());
