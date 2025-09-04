@@ -1,13 +1,16 @@
 package com.userservice.userservice.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.userservice.userservice.repository.SessionRepository;
+import com.userservice.userservice.client.ModelServiceClient;
 import com.userservice.userservice.dto.CreateSessionRequest;
+import com.userservice.userservice.dto.StressInputDto;
 import com.userservice.userservice.dto.UpdateSessionDto;
 import com.userservice.userservice.model.Session;
 import com.userservice.userservice.model.User;
@@ -19,10 +22,14 @@ import com.userservice.userservice.errors.User.*;
 public class SessionService {
     private final UserService userService;
     private final SessionRepository sessionRepository;
+    private final ModelServiceClient modelServiceClient;
 
-    public SessionService(UserService userService, SessionRepository sessionRepository) {
+    public SessionService(UserService userService,
+                        SessionRepository sessionRepository,
+                        ModelServiceClient modelServiceClient) {
         this.userService = userService;
         this.sessionRepository = sessionRepository;
+        this.modelServiceClient = modelServiceClient;
     }
 
     public Session getSessionById(Long sessionId) {
@@ -133,6 +140,49 @@ public class SessionService {
             throw new SessionRemovalException(sessionId, null);
         } catch (Exception e) {
             throw new RuntimeException("Unexpected error while deleting session with id " + sessionId, e);
+        }
+    }
+
+    public void predictSessionStress(Long sessionId) {
+        try {
+            Session session = sessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new SessionNotFoundException(sessionId, null));
+
+
+            if (session.getStressLevel() != null) {
+                throw new RuntimeException("Stress level has already been predicted for this session");
+            }
+
+            StressInputDto inputDto = new StressInputDto();
+            inputDto.setHeadache(session.getHeadache());
+            inputDto.setSleepQuality(session.getSleepQuality());
+            inputDto.setBreathingProblems(session.getBreathingProblems());
+            inputDto.setNoiseLevel(session.getNoiseLevel());
+            inputDto.setLivingConditions(session.getLivingConditions());
+            inputDto.setSafety(session.getSafety());
+            inputDto.setBasicNeeds(session.getBasicNeeds());
+            inputDto.setAcademicPerformance(session.getAcademicPerformance());
+            inputDto.setStudyLoad(session.getStudyLoad());
+            inputDto.setTeacherStudentRelationship(session.getTeacherStudentRelationship());
+            inputDto.setFutureCareerConcerns(session.getFutureCareerConcerns());
+            inputDto.setSocialSupport(session.getSocialSupport());
+            inputDto.setPeerPressure(session.getPeerPressure());
+            inputDto.setExtracurricularActivities(session.getExtracurricularActivities());
+            inputDto.setBullying(session.getBullying());
+
+            Map<String, Object> modelResponse = modelServiceClient.predictStress(inputDto);
+
+            Integer predictedStressLevel = ((Map<String, Integer>) modelResponse.get("data")).get("stress_level");
+            
+            session.setStressLevel(predictedStressLevel);
+            sessionRepository.save(session);
+
+        } catch (SessionNotFoundException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error predicting stress: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected error while predicting stress for session " + sessionId, e);
         }
     }
 }

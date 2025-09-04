@@ -1,6 +1,7 @@
 package com.userservice.userservice.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.userservice.userservice.dto.CreateSessionRequest;
 import com.userservice.userservice.dto.SessionDto;
+import com.userservice.userservice.dto.StressInputDto;
 import com.userservice.userservice.dto.UpdateSessionDto;
+import com.userservice.userservice.errors.Session.SessionNotFoundException;
 import com.userservice.userservice.model.Session;
 import com.userservice.userservice.service.SessionService;
 
@@ -106,6 +109,36 @@ public class SessionController {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/predict/{sessionId}")
+    @PreAuthorize("@security.isSessionOwner(authentication, #sessionId) or @security.isAdmin(authentication)")
+    public ResponseEntity<?> predictSessionStress(@PathVariable Long sessionId) {
+        try {
+            sessionService.predictSessionStress(sessionId);
+            return ResponseEntity.ok(Map.of(
+                    "status", 200,
+                    "message", "Stress level predicted and saved successfully"
+            ));
+        } catch (SessionNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "Session not found",
+                    "error", e.getMessage()
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(403).body(Map.of(
+                    "status", 403,
+                    "message", "Unauthorized or session does not belong to user",
+                    "error", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "Internal server error",
+                    "error", e.getMessage()
+            ));
         }
     }
 }
