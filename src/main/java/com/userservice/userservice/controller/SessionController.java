@@ -17,6 +17,7 @@ import com.userservice.userservice.errors.Session.SessionNotFoundException;
 import com.userservice.userservice.model.Session;
 import com.userservice.userservice.service.SessionService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
@@ -49,7 +50,7 @@ public class SessionController {
     @PostMapping("/user/{userId}")
     @PreAuthorize("@security.isOwner(authentication, #userId) or @security.isAdmin(authentication)")
     public ResponseEntity<?> addSession(@PathVariable Long userId,
-                                        @RequestBody CreateSessionRequest request) {
+                                        @Valid @RequestBody CreateSessionRequest request) {
         try {
             Session session = sessionService.addSession(request, userId);
             return ResponseEntity.ok(SessionDto.fromEntity(session));
