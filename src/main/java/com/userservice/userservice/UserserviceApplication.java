@@ -11,10 +11,3 @@ public class UserserviceApplication {
 	}
 
 }
-
-// brew services start postgresql
-// psql
-// export DB_URL={DB_URL}
-// export DB_USERNAME={DB_USERNAME}
-// export DB_PASSWORD={DB_PASSWORD}
-// ./mvnw spring-boot:run
