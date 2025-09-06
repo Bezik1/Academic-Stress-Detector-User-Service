@@ -1,5 +1,7 @@
 package com.userservice.userservice.controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -27,7 +29,11 @@ public class UserController {
             User user = userService.findById(principalId);
             return ResponseEntity.ok(new UserDto(user));
         } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "User not found",
+                    "error", e.getMessage()
+            ));
         }
     }
 
@@ -38,7 +44,11 @@ public class UserController {
             userService.removeByUserId(userId);
             return ResponseEntity.noContent().build();
         } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "User not found",
+                    "error", e.getMessage()
+            ));
         }
     }
 
@@ -52,7 +62,11 @@ public class UserController {
             User updated = userService.updateUser(userId, email, username);
             return ResponseEntity.ok(new UserDto(updated));
         } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "User not found",
+                    "error", e.getMessage()
+            ));
         }
     }
 }

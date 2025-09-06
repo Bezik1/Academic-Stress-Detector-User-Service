@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import com.userservice.userservice.dto.CreateSessionRequest;
 import com.userservice.userservice.dto.SessionDto;
 import com.userservice.userservice.errors.Session.SessionNotFoundException;
+import com.userservice.userservice.errors.User.UserNotFoundException;
 import com.userservice.userservice.model.Session;
 import com.userservice.userservice.service.SessionService;
 
@@ -28,9 +29,10 @@ public class SessionController {
 
     @GetMapping("/auth-test")
     public ResponseEntity<?> authTest(Authentication authentication) {
-        System.out.println("Principal: " + authentication.getPrincipal());
-        System.out.println("Authorities: " + authentication.getAuthorities());
-        return ResponseEntity.ok(authentication.getAuthorities());
+        return ResponseEntity.ok(Map.of(
+                "principal", authentication.getPrincipal(),
+                "authorities", authentication.getAuthorities()
+        ));
     }
 
     @GetMapping
@@ -38,8 +40,12 @@ public class SessionController {
     public ResponseEntity<?> getSessions() {
         try {
             return ResponseEntity.ok(sessionService.getAllSessions());
-        } catch(Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "Failed to fetch sessions",
+                    "error", e.getMessage()
+            ));
         }
     }
 
@@ -50,8 +56,18 @@ public class SessionController {
         try {
             Session session = sessionService.addSession(request, userId);
             return ResponseEntity.ok(SessionDto.fromEntity(session));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "User not found",
+                    "error", e.getMessage()
+            ));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "Failed to add session",
+                    "error", e.getMessage()
+            ));
         }
     }
 
@@ -64,8 +80,18 @@ public class SessionController {
                     .map(SessionDto::fromEntity)
                     .collect(Collectors.toList());
             return ResponseEntity.ok(result);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "User not found",
+                    "error", e.getMessage()
+            ));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "Failed to fetch sessions for user",
+                    "error", e.getMessage()
+            ));
         }
     }
 
@@ -75,10 +101,18 @@ public class SessionController {
         try {
             sessionService.removeSessionById(sessionId);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+        } catch (SessionNotFoundException e) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "Session not found",
+                    "error", e.getMessage()
+            ));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "Failed to delete session",
+                    "error", e.getMessage()
+            ));
         }
     }
 
@@ -98,9 +132,9 @@ public class SessionController {
                     "error", e.getMessage()
             ));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(403).body(Map.of(
-                    "status", 403,
-                    "message", "Unauthorized or session does not belong to user",
+            return ResponseEntity.status(400).body(Map.of(
+                    "status", 400,
+                    "message", "Cannot predict stress",
                     "error", e.getMessage()
             ));
         } catch (Exception e) {
