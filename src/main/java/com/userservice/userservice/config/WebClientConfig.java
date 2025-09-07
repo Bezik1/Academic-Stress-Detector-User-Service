@@ -8,8 +8,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfig {
 
     @Bean
-    public WebClient webClient() {
-        return WebClient.builder().baseUrl("http://localhost:8081")
-                        .build();
+    public WebClient modelServiceWebClient() {
+        return WebClient.builder()
+                .baseUrl("http://127.0.0.1:8000")
+                .build();
+    }
+
+    @Bean
+    public WebClient authServiceWebClient() {
+        return WebClient.builder()
+                .baseUrl("https://academic-stress-detector-auth-service.onrender.com")
+                .build();
     }
 }
