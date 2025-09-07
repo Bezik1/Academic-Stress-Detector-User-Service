@@ -20,13 +20,20 @@ public class AuthServiceClient {
             return webClient.get()
                     .uri("/auth/validate")
                     .header("Authorization", "Bearer " + token)
-                    .retrieve()
-                    .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                                resp -> resp.bodyToMono(String.class).map(body -> new RuntimeException("Auth service error: " + resp.statusCode() + " " + body)))
-                    .bodyToMono(ValidationResponse.class)
+                    .exchangeToMono(resp -> {
+                        if (resp.statusCode().is2xxSuccessful()) {
+                            return resp.bodyToMono(ValidationResponse.class);
+                        } else if (resp.statusCode().value() == 401) {
+                            throw new RuntimeException("Unauthorized token");
+                        } else {
+                            return resp.bodyToMono(String.class)
+                                    .map(body -> { throw new RuntimeException("Auth service error: " + resp.statusCode() + " " + body); });
+                        }
+                    })
                     .block();
         } catch (Exception e) {
             throw new RuntimeException("Failed to call auth service validate endpoint", e);
         }
     }
+
 }
