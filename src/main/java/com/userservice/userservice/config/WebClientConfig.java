@@ -10,7 +10,7 @@ public class WebClientConfig {
     @Bean
     public WebClient modelServiceWebClient() {
         return WebClient.builder()
-                .baseUrl("http://127.0.0.1:8000")
+                .baseUrl("https://academic-stress-detector-model-service.onrender.com")
                 .build();
     }
 
