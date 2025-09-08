@@ -40,7 +40,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://academic-stress-detector-client-ser.vercel.app", "http://localhost:5173", "https://academic-stress-detector-auth-service.onrender.com"));
+        configuration.setAllowedOrigins(List.of("https://academic-stress-detector-client-ser.vercel.app", "https://academic-stress-detector-auth-service.onrender.com"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
